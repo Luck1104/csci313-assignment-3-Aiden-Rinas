@@ -1,8 +1,9 @@
 {% extends "base_generic.html" %} {% block content %}
-<h1>Author: {{ author }}</h1>
-<p>({{ author.date_of_birth }} - {{ author.date_of_death }})</p>
+<h1 class="container mt-3">Author: {{ author }}</h1>
+<p class="container">({{ author.date_of_birth }} - {{ author.date_of_death }})</p>
+<hr>
 
-<div style="margin-left: 20px; margin-top: 20px; margin-right: 40px">
+<div class="container border mt-3 pt-3">
   <h4>Books</h4>
 
   <ul>
