@@ -1,6 +1,9 @@
 from django.test import TestCase
 
 from catalog.models import Author
+from catalog.models import Book
+from catalog.models import Genre
+from catalog.models import Language
 
 class AuthorModelTest(TestCase):
     @classmethod
@@ -47,3 +50,94 @@ class AuthorModelTest(TestCase):
         author = Author.objects.get(id=1)
         # This will also fail if the urlconf is not defined.
         self.assertEqual(author.get_absolute_url(), '/catalog/author/1')
+
+class GenreModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Genre.objects.create(name='Fantasy')
+    
+    def test_name_label(self):
+        genre = Genre.objects.get(id=1)
+        field_label = genre._meta.get_field('name').verbose_name
+        self.assertEqual(field_label, 'name')
+
+    def test_name_max_length(self):
+        genre = Genre.objects.get(id=1)
+        max_length = genre._meta.get_field('name').max_length
+        self.assertEqual(max_length, 200)
+
+class LanguageModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Language.objects.create(name='German')
+    
+    def test_name_label(self):
+        language = Language.objects.get(id=1)
+        field_label = language._meta.get_field('name').verbose_name
+        self.assertEqual(field_label, 'name')
+
+    def test_name_max_length(self):
+        language = Language.objects.get(id=1)
+        max_length = language._meta.get_field('name').max_length
+        self.assertEqual(max_length, 200)
+
+class BookModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        gen = Genre.objects.create(name='Fantasy')
+        lan = Language.objects.create(name='German')
+        bigbob = Author.objects.create(first_name='Big', last_name='Bob')
+        Book.objects.create(title='test', author=bigbob, summary='words words words', 
+                            isbn='1111111111111', language=lan)
+        book = Book.objects.get(id=1)
+        book.genre.add(gen)
+        
+    def test_title_label(self):
+        book = Book.objects.get(id=1)
+        field_label = book._meta.get_field('title').verbose_name
+        self.assertEqual(field_label, 'title')
+    
+    def test_author_label(self):
+        book = Book.objects.get(id=1)
+        field_label = book._meta.get_field('author').verbose_name
+        self.assertEqual(field_label, 'author')
+
+    def test_summary_label(self):
+        book = Book.objects.get(id=1)
+        field_label = book._meta.get_field('summary').verbose_name
+        self.assertEqual(field_label, 'summary')
+
+    def test_isbn_label(self):
+        book = Book.objects.get(id=1)
+        field_label = book._meta.get_field('isbn').verbose_name
+        self.assertEqual(field_label, 'ISBN')
+
+    def test_genre_label(self):
+        book = Book.objects.get(id=1)
+        field_label = book._meta.get_field('genre').verbose_name
+        self.assertEqual(field_label, 'genre')
+
+    def test_language_label(self):
+        book = Book.objects.get(id=1)
+        field_label = book._meta.get_field('language').verbose_name
+        self.assertEqual(field_label, 'language')
+
+    def test_title_max_length(self):
+        book = Book.objects.get(id=1)
+        max_length = book._meta.get_field('title').max_length
+        self.assertEqual(max_length, 200)
+    
+    def test_summary_max_length(self):
+        book = Book.objects.get(id=1)
+        max_length = book._meta.get_field('summary').max_length
+        self.assertEqual(max_length, 1000)
+
+    def test_isbn_max_length(self):
+        book = Book.objects.get(id=1)
+        max_length = book._meta.get_field('isbn').max_length
+        self.assertEqual(max_length, 13)
+    
+    def test_get_absolute_url(self):
+        book = Book.objects.get(id=1)
+        # This will also fail if the urlconf is not defined.
+        self.assertEqual(book.get_absolute_url(), '/catalog/book/1')
